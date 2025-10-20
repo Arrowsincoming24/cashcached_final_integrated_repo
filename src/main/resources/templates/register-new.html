@@ -58,8 +58,9 @@
                     <p style="color: rgba(255,255,255,0.6); font-size: 15px;">Join our Fixed Deposit Simulator</p>
                 </div>
 
-                <!-- Error Message -->
+                <!-- Messages -->
                 <div class="message error" id="errorMessage" style="display: none;"></div>
+                <div class="message success" id="successMessage" style="display: none; background: rgba(34, 197, 94, 0.1); border-color: #22c55e; color: #22c55e;"></div>
 
                 <!-- Registration Form -->
                 <form id="registerForm" onsubmit="handleRegister(event)">
@@ -68,13 +69,13 @@
                             <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
                                 First Name *
                             </label>
-                            <input type="text" class="form-control" id="firstName" placeholder="John" required>
+                            <input type="text" class="form-control" id="firstName" placeholder="User" required>
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
                                 Last Name *
                             </label>
-                            <input type="text" class="form-control" id="lastName" placeholder="Doe" required>
+                            <input type="text" class="form-control" id="lastName" placeholder="Name" required>
                         </div>
                     </div>
 
@@ -82,14 +83,14 @@
                         <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
                             Username *
                         </label>
-                        <input type="text" class="form-control" id="username" placeholder="johndoe" required>
+                        <input type="text" class="form-control" id="username" placeholder="username" required>
                     </div>
 
                     <div style="margin-bottom: 20px;">
                         <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
                             Email *
                         </label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required>
+                        <input type="email" class="form-control" id="email" placeholder="user@example.com" required>
                     </div>
 
                     <div style="margin-bottom: 20px;">
@@ -174,8 +175,15 @@
                     throw new Error(error || 'Registration failed');
                 }
 
-                alert('Registration successful! Please login.');
-                window.location.href = '/fd-simulator/login';
+                // Show success message
+                const successEl = document.getElementById('successMessage');
+                successEl.textContent = '✓ Registration successful! Redirecting to login...';
+                successEl.style.display = 'block';
+                
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/fd-simulator/login';
+                }, 2000);
             } catch (error) {
                 showError(error.message);
                 registerBtn.disabled = false;

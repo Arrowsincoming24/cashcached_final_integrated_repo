@@ -223,6 +223,22 @@ public class AdminController {
         return ResponseEntity.ok(product);
     }
     
+    // Enhanced product creation - Using completely different path to avoid ALL conflicts
+    @PostMapping(value = "/create-product-enhanced", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<FdProduct> createProductEnhanced(@RequestBody FdProduct product, 
+                                                          Authentication authentication) {
+        logger.info("🔥 POST /api/admin/create-product-enhanced called");
+        try {
+            User currentUser = (User) authentication.getPrincipal();
+            FdProduct created = productManagementService.createProduct(product, currentUser.getEmail());
+            logger.info("✅ Enhanced product created: {}", created.getProductName());
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            logger.error("❌ Error creating enhanced product: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+    
     @PostMapping("/products")
     public ResponseEntity<FdProduct> createProduct(@RequestBody FdProduct product, 
                                                    Authentication authentication, 
@@ -281,14 +297,6 @@ public class AdminController {
     public ResponseEntity<ProductDetailsDTO> getProductDetailsEnhanced(@PathVariable Long id) {
         ProductDetailsDTO product = productManagementService.getProductDetails(id);
         return ResponseEntity.ok(product);
-    }
-    
-    @PostMapping("/products/enhanced")
-    public ResponseEntity<FdProduct> createProductEnhanced(@RequestBody FdProduct product, 
-                                                          Authentication authentication) {
-        User currentUser = (User) authentication.getPrincipal();
-        FdProduct created = productManagementService.createProduct(product, currentUser.getEmail());
-        return ResponseEntity.ok(created);
     }
     
     @PutMapping("/products/{id:[0-9]+}/enhanced")

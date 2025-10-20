@@ -204,19 +204,32 @@
         
         async function loadProducts() {
             try {
-                const res = await fetch(BASE_URL + '/api/public/products/active');
-                if (!res.ok) throw new Error('Failed');
+                // Using PUBLIC endpoint - no auth required
+                const res = await fetch(BASE_URL + '/api/public/products');
+                if (!res.ok) {
+                    console.error('Failed to load products:', res.status);
+                    document.getElementById('productSelect').innerHTML = '<option value="">No products available</option>';
+                    return;
+                }
                 products = await res.json();
                 const sel = document.getElementById('productSelect');
-                sel.innerHTML = '<option value="">-- Select --</option>';
-                products.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.id;
-                    opt.textContent = `${p.name} (${p.interestRate}%)`;
-                    opt.dataset.rate = p.interestRate;
-                    sel.appendChild(opt);
-                });
-            } catch(e) { console.error(e); }
+                
+                if (products && products.length > 0) {
+                    sel.innerHTML = '<option value="">-- Select Product --</option>';
+                    products.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = `${p.productName || p.name} (${p.interestRate}%)`;
+                        opt.dataset.rate = p.interestRate;
+                        sel.appendChild(opt);
+                    });
+                } else {
+                    sel.innerHTML = '<option value="">No products available</option>';
+                }
+            } catch(e) { 
+                console.error('Error loading products:', e);
+                document.getElementById('productSelect').innerHTML = '<option value="">No products available</option>';
+            }
         }
         
         document.getElementById('productSelect').addEventListener('change', function() {
