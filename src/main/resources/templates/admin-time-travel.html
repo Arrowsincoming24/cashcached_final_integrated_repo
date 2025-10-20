@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Travel - CashCached</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div style="padding: 32px; position: relative; z-index: 1;">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1><i class="fas fa-clock"></i> Time Travel</h1>
+            <button class="btn btn-secondary" onclick="window.location.href='/fd-simulator/admin/dashboard'">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+        </div>
+
+        <!-- Current Status -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-info-circle"></i> Current Status</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-value" id="currentDate">Loading...</div>
+                    <div class="stat-label">Current System Date</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-toggle-on"></i>
+                    </div>
+                    <div class="stat-value" id="timeTravelStatus">Loading...</div>
+                    <div class="stat-label">Time Travel Status</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-value" id="simulatedDate">N/A</div>
+                    <div class="stat-label">Simulated Date</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Travel Controls -->
+        <div class="glass-card">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-cog"></i> Time Travel Controls</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <!-- Enable/Disable -->
+                <div>
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Enable/Disable Time Travel</h4>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="enableTimeTravel()" style="flex: 1;">
+                            <i class="fas fa-play"></i> Enable
+                        </button>
+                        <button class="btn btn-danger" onclick="disableTimeTravel()" style="flex: 1;">
+                            <i class="fas fa-stop"></i> Disable
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Set Date -->
+                <div>
+                    <h4 style="margin-bottom: 16px; color: var(--text-primary);">Set Simulated Date</h4>
+                    <div style="display: flex; gap: 12px;">
+                        <input type="date" class="form-control" id="simulatedDateInput" style="flex: 1;">
+                        <button class="btn btn-primary" onclick="setSimulatedDate()">
+                            <i class="fas fa-calendar-check"></i> Set Date
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--card-border);">
+                <h4 style="margin-bottom: 16px; color: var(--text-primary);">Quick Actions</h4>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <button class="btn btn-secondary" onclick="addDays(1)">
+                        <i class="fas fa-plus"></i> +1 Day
+                    </button>
+                    <button class="btn btn-secondary" onclick="addDays(7)">
+                        <i class="fas fa-plus"></i> +1 Week
+                    </button>
+                    <button class="btn btn-secondary" onclick="addDays(30)">
+                        <i class="fas fa-plus"></i> +1 Month
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetToToday()">
+                        <i class="fas fa-undo"></i> Reset to Today
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information -->
+        <div class="glass-card" style="margin-top: 24px; background: rgba(99, 102, 241, 0.1);">
+            <h4 style="margin-bottom: 12px; color: var(--primary-light);"><i class="fas fa-lightbulb"></i> About Time Travel</h4>
+            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                Time Travel allows you to simulate future dates for testing FD maturity, interest calculations, and batch processing. 
+                When enabled, the system will use the simulated date instead of the current date for all time-dependent operations.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/fd-simulator/api/admin';
+        const token = localStorage.getItem('token');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!token) {
+                window.location.href = '/fd-simulator/login';
+                return;
+            }
+            loadTimeTravelStatus();
+        });
+
+        async function loadTimeTravelStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/time-travel/status`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load status');
+
+                const data = await response.json();
+                
+                document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('timeTravelStatus').textContent = data.enabled ? 'Enabled' : 'Disabled';
+                document.getElementById('simulatedDate').textContent = data.simulatedDate || 'N/A';
+
+                if (data.simulatedDate) {
+                    document.getElementById('simulatedDateInput').value = data.simulatedDate;
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+                document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('timeTravelStatus').textContent = 'Error';
+            }
+        }
+
+        async function enableTimeTravel() {
+            try {
+                const response = await fetch(`${API_BASE}/time-travel/enable`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to enable');
+
+                alert('Time Travel enabled successfully!');
+                loadTimeTravelStatus();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to enable Time Travel');
+            }
+        }
+
+        async function disableTimeTravel() {
+            try {
+                const response = await fetch(`${API_BASE}/time-travel/disable`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to disable');
+
+                alert('Time Travel disabled successfully!');
+                loadTimeTravelStatus();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to disable Time Travel');
+            }
+        }
+
+        async function setSimulatedDate() {
+            const date = document.getElementById('simulatedDateInput').value;
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/time-travel/set-date?date=${date}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to set date');
+
+                alert('Simulated date set successfully!');
+                loadTimeTravelStatus();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to set simulated date');
+            }
+        }
+
+        function addDays(days) {
+            const currentInput = document.getElementById('simulatedDateInput').value;
+            const baseDate = currentInput ? new Date(currentInput) : new Date();
+            baseDate.setDate(baseDate.getDate() + days);
+            
+            const newDate = baseDate.toISOString().split('T')[0];
+            document.getElementById('simulatedDateInput').value = newDate;
+        }
+
+        function resetToToday() {
+            document.getElementById('simulatedDateInput').value = new Date().toISOString().split('T')[0];
+        }
+    </script>
+</body>
+</html>

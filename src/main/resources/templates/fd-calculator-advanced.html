@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="context-path" content="/fd-simulator">
+    <title>Advanced FD Calculator - CashCached</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-start: #FF5BBE;
+            --primary-end: #FF0099;
+            --secondary-purple: #7C3AED;
+            --secondary-aqua: #00F0FF;
+            --dark-bg: #0D0D12;
+            --card-bg: #1a1a24;
+            --light-text: #F5F5F7;
+            --grey-text: #6B7280;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: var(--light-text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 91, 190, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .container-fluid {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .tagline {
+            color: var(--grey-text);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* Language & Currency Selector */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 91, 190, 0.2);
+            border-color: var(--primary-start);
+            transform: translateY(-2px);
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            border-color: transparent;
+            box-shadow: 0px 4px 15px rgba(255, 0, 153, 0.4);
+        }
+        
+        /* Calculator Card */
+        .calculator-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background: linear-gradient(135deg, rgba(255, 91, 190, 0.05), rgba(124, 58, 237, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover {
+            border-color: var(--primary-start);
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 25px rgba(255, 91, 190, 0.3);
+        }
+        
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .product-card.selected {
+            border-color: var(--primary-end);
+            background: linear-gradient(135deg, rgba(255, 91, 190, 0.15), rgba(124, 58, 237, 0.15));
+            box-shadow: 0px 8px 25px rgba(255, 0, 153, 0.4);
+        }
+        
+        .product-card.selected::before {
+            transform: scaleX(1);
+        }
+        
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+        
+        .product-rate {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'SF Mono', monospace;
+            margin-bottom: 10px;
+        }
+        
+        .product-details {
+            font-size: 0.85rem;
+            color: var(--grey-text);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        /* Input Section */
+        .input-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group-custom {
+            margin-bottom: 35px;
+        }
+        
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .label-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--light-text);
+        }
+        
+        .label-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'SF Mono', monospace;
+        }
+        
+        /* Custom Slider */
+        .slider-wrapper {
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        .custom-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, 
+                var(--primary-start) 0%, 
+                var(--primary-end) 50%, 
+                var(--secondary-purple) 100%);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        
+        .custom-slider:hover {
+            opacity: 0.6;
+        }
+        
+        .custom-slider:active {
+            opacity: 1;
+        }
+        
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+            cursor: pointer;
+            box-shadow: 0px 4px 15px rgba(255, 0, 153, 0.5);
+            border: 3px solid var(--dark-bg);
+        }
+        
+        .custom-slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+            cursor: pointer;
+            border: 3px solid var(--dark-bg);
+            box-shadow: 0px 4px 15px rgba(255, 0, 153, 0.5);
+        }
+        
+        .slider-range {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--grey-text);
+        }
+        
+        /* Calculation Type Toggle */
+        .calc-type-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .calc-type-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--light-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .calc-type-btn:hover {
+            background: rgba(255, 91, 190, 0.1);
+            border-color: var(--primary-start);
+        }
+        
+        .calc-type-btn.active {
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            border-color: transparent;
+            box-shadow: 0px 4px 15px rgba(255, 0, 153, 0.4);
+        }
+        
+        /* Calculate Button */
+        .btn-calculate {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 8px 25px rgba(255, 0, 153, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-calculate::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-calculate:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 12px 35px rgba(255, 0, 153, 0.6);
+        }
+        
+        .btn-calculate:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Results Card */
+        .results-card {
+            background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0px 8px 30px rgba(255, 0, 153, 0.4);
+            animation: slideInRight 0.6s ease;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .result-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
+        }
+        
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'SF Mono', monospace;
+            text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-highlight {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1s ease;
+        }
+        
+        /* Breakdown Table */
+        .breakdown-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .breakdown-row:last-child {
+            border-bottom: none;
+        }
+        
+        .breakdown-label {
+            color: var(--grey-text);
+            font-weight: 500;
+        }
+        
+        .breakdown-value {
+            font-weight: 700;
+            font-family: 'SF Mono', monospace;
+            color: var(--light-text);
+        }
+        
+        /* Comparison Section */
+        .comparison-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-card:hover {
+            background: rgba(255, 91, 190, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .comparison-label {
+            font-size: 0.85rem;
+            color: var(--grey-text);
+            margin-bottom: 10px;
+        }
+        
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light-text);
+            font-family: 'SF Mono', monospace;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light-text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+            transform: translateY(-2px);
+            box-shadow: 0px 6px 20px rgba(255, 0, 153, 0.4);
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .calculator-card {
+                padding: 20px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-value {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip */
+        .tooltip-custom {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .tooltip-custom:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--light-text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i> <span data-i18n="back">Back</span>
+    </button>
+    
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-infinity"></i> CashCached
+            </div>
+            <div class="tagline" data-i18n="tagline">Advanced Fixed Deposit Calculator</div>
+        </div>
+        
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="control-group">
+                <span style="color: var(--grey-text); font-weight: 500;">
+                    <i class="fas fa-language"></i> <span data-i18n="language">Language</span>:
+                </span>
+                <button class="control-btn active" onclick="changeLanguage('en')" id="lang-en">English</button>
+                <button class="control-btn" onclick="changeLanguage('ja')" id="lang-ja">日本語</button>
+                <button class="control-btn" onclick="changeLanguage('hi')" id="lang-hi">हिंदी</button>
+                <button class="control-btn" onclick="changeLanguage('ar')" id="lang-ar">العربية</button>
+            </div>
+            
+            <div class="control-group">
+                <span style="color: var(--grey-text); font-weight: 500;">
+                    <i class="fas fa-dollar-sign"></i> <span data-i18n="currency">Currency</span>:
+                </span>
+                <button class="control-btn active" onclick="changeCurrency('USD')" id="curr-USD">USD $</button>
+                <button class="control-btn" onclick="changeCurrency('INR')" id="curr-INR">INR ₹</button>
+                <button class="control-btn" onclick="changeCurrency('KWD')" id="curr-KWD">KWD د.ك</button>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="calculator-card">
+                    <!-- Calculation Type Toggle -->
+                    <div class="calc-type-toggle">
+                        <button class="calc-type-btn active" onclick="setCalcType('simple')" id="calc-simple">
+                            <i class="fas fa-calculator"></i> <span data-i18n="simpleInterest">Simple Interest</span>
+                        </button>
+                        <button class="calc-type-btn" onclick="setCalcType('compound')" id="calc-compound">
+                            <i class="fas fa-chart-line"></i> <span data-i18n="compoundInterest">Compound Interest</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Product Selection -->
+                    <h4 style="margin-bottom: 20px; color: var(--light-text);">
+                        <i class="fas fa-box"></i> <span data-i18n="selectProduct">Select CashCached Product</span>
+                    </h4>
+                    <div class="products-grid" id="productsGrid">
+                        <div class="text-center" style="grid-column: 1/-1;">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Input Section -->
+                    <div class="input-section">
+                        <!-- Amount Slider -->
+                        <div class="input-group-custom">
+                            <div class="input-label">
+                                <span class="label-text">
+                                    <i class="fas fa-money-bill-wave"></i> <span data-i18n="depositAmount">Deposit Amount</span>
+                                </span>
+                                <span class="label-value" id="amountValue">$50,000</span>
+                            </div>
+                            <div class="slider-wrapper">
+                                <input type="range" class="custom-slider" id="amountSlider" 
+                                       min="5000" max="1000000" step="1000" value="50000">
+                            </div>
+                            <div class="slider-range">
+                                <span id="minAmountLabel">$5,000</span>
+                                <span id="maxAmountLabel">$1,000,000</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Tenure Slider -->
+                        <div class="input-group-custom">
+                            <div class="input-label">
+                                <span class="label-text">
+                                    <i class="fas fa-calendar-alt"></i> <span data-i18n="tenure">Tenure</span>
+                                </span>
+                                <span class="label-value" id="tenureValue">12 <span data-i18n="months">months</span></span>
+                            </div>
+                            <div class="slider-wrapper">
+                                <input type="range" class="custom-slider" id="tenureSlider" 
+                                       min="3" max="60" step="1" value="12">
+                            </div>
+                            <div class="slider-range">
+                                <span><span id="minTenureLabel">3</span> <span data-i18n="months">months</span></span>
+                                <span><span id="maxTenureLabel">60</span> <span data-i18n="months">months</span></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Interest Rate Display -->
+                        <div class="input-group-custom">
+                            <div class="input-label">
+                                <span class="label-text">
+                                    <i class="fas fa-percent"></i> <span data-i18n="interestRate">Interest Rate</span>
+                                    <span class="tooltip-custom" data-tooltip="Rate varies by product">
+                                        <i class="fas fa-info-circle" style="font-size: 0.85rem; opacity: 0.7;"></i>
+                                    </span>
+                                </span>
+                                <span class="label-value" id="rateValue">6.5%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Compound Frequency (shown only for compound interest) -->
+                        <div class="input-group-custom" id="compoundFrequencyGroup" style="display: none;">
+                            <div class="input-label">
+                                <span class="label-text">
+                                    <i class="fas fa-sync"></i> <span data-i18n="compoundFrequency">Compound Frequency</span>
+                                </span>
+                            </div>
+                            <select class="control-btn" style="width: 100%; text-align: left;" id="compoundFrequency">
+                                <option value="1" data-i18n-option="annually">Annually</option>
+                                <option value="2" data-i18n-option="halfYearly">Half-Yearly</option>
+                                <option value="4" selected data-i18n-option="quarterly">Quarterly</option>
+                                <option value="12" data-i18n-option="monthly">Monthly</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-calculate" onclick="calculateReturns()">
+                        <i class="fas fa-calculator"></i> <span data-i18n="calculate">Calculate Returns</span>
+                    </button>
+                </div>
+                
+                <!-- Comparison Section -->
+                <div class="comparison-section" id="comparisonSection" style="display: none;">
+                    <h4 style="margin-bottom: 20px; color: var(--light-text);">
+                        <i class="fas fa-balance-scale"></i> <span data-i18n="comparison">Interest Comparison</span>
+                    </h4>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <div class="comparison-label" data-i18n="simpleInterest">Simple Interest</div>
+                            <div class="comparison-value" id="simpleComparison">$0</div>
+                        </div>
+                        <div class="comparison-card">
+                            <div class="comparison-label" data-i18n="compoundInterest">Compound Interest</div>
+                            <div class="comparison-value" id="compoundComparison">$0</div>
+                        </div>
+                        <div class="comparison-card">
+                            <div class="comparison-label" data-i18n="difference">Difference</div>
+                            <div class="comparison-value" id="differenceComparison" style="color: var(--secondary-aqua);">$0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5">
+                <!-- Results Card -->
+                <div class="results-card" id="resultsCard" style="display: none;">
+                    <h4 style="margin-bottom: 25px;">
+                        <i class="fas fa-chart-pie"></i> <span data-i18n="yourReturns">Your Returns</span>
+                    </h4>
+                    
+                    <div class="result-item">
+                        <div class="result-label" data-i18n="principalAmount">Principal Amount</div>
+                        <div class="result-value" id="principalDisplay">$0</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label" data-i18n="interestEarned">Interest Earned</div>
+                        <div class="result-value" id="interestDisplay">$0</div>
+                    </div>
+                    
+                    <div class="result-item result-highlight">
+                        <div class="result-label" data-i18n="maturityAmount">Maturity Amount</div>
+                        <div class="result-value" id="maturityDisplay">$0</div>
+                    </div>
+                    
+                    <div class="breakdown-table">
+                        <div class="breakdown-row">
+                            <span class="breakdown-label"><i class="fas fa-calendar-check"></i> <span data-i18n="maturityDate">Maturity Date</span></span>
+                            <span class="breakdown-value" id="maturityDateDisplay">-</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label"><i class="fas fa-percentage"></i> <span data-i18n="effectiveRate">Effective Rate</span></span>
+                            <span class="breakdown-value" id="effectiveRateDisplay">-</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label"><i class="fas fa-chart-line"></i> <span data-i18n="roi">ROI</span></span>
+                            <span class="breakdown-value" id="roiDisplay">-</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label"><i class="fas fa-coins"></i> <span data-i18n="monthlyReturn">Monthly Return</span></span>
+                            <span class="breakdown-value" id="monthlyReturnDisplay">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chart -->
+                <div class="chart-container" id="chartContainer" style="display: none;">
+                    <canvas id="fdChart"></canvas>
+                </div>
+                
+                <!-- CTA Button -->
+                <div class="text-center mt-4" id="ctaSection" style="display: none;">
+                    <button class="btn-calculate" onclick="goToLogin()" style="background: linear-gradient(90deg, var(--secondary-purple), var(--secondary-aqua));">
+                        <i class="fas fa-user-plus"></i> <span data-i18n="openAccount">Open FD Account Now</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="/fd-simulator/js/auth.js"></script>
+    <script>
+        // Translations
+        const translations = {
+            en: {
+                back: 'Back',
+                tagline: 'Advanced Fixed Deposit Calculator',
+                language: 'Language',
+                currency: 'Currency',
+                simpleInterest: 'Simple Interest',
+                compoundInterest: 'Compound Interest',
+                selectProduct: 'Select CashCached Product',
+                depositAmount: 'Deposit Amount',
+                tenure: 'Tenure',
+                months: 'months',
+                interestRate: 'Interest Rate',
+                compoundFrequency: 'Compound Frequency',
+                annually: 'Annually',
+                halfYearly: 'Half-Yearly',
+                quarterly: 'Quarterly',
+                monthly: 'Monthly',
+                calculate: 'Calculate Returns',
+                yourReturns: 'Your Returns',
+                principalAmount: 'Principal Amount',
+                interestEarned: 'Interest Earned',
+                maturityAmount: 'Maturity Amount',
+                maturityDate: 'Maturity Date',
+                effectiveRate: 'Effective Rate',
+                roi: 'ROI',
+                monthlyReturn: 'Monthly Return',
+                comparison: 'Interest Comparison',
+                difference: 'Difference',
+                openAccount: 'Open FD Account Now'
+            },
+            ja: {
+                back: '戻る',
+                tagline: '高度な定期預金計算機',
+                language: '言語',
+                currency: '通貨',
+                simpleInterest: '単利',
+                compoundInterest: '複利',
+                selectProduct: 'CashCached商品を選択',
+                depositAmount: '預金額',
+                tenure: '期間',
+                months: 'ヶ月',
+                interestRate: '金利',
+                compoundFrequency: '複利頻度',
+                annually: '年次',
+                halfYearly: '半年ごと',
+                quarterly: '四半期ごと',
+                monthly: '毎月',
+                calculate: 'リターンを計算',
+                yourReturns: 'あなたのリターン',
+                principalAmount: '元本',
+                interestEarned: '獲得利息',
+                maturityAmount: '満期金額',
+                maturityDate: '満期日',
+                effectiveRate: '実効金利',
+                roi: '投資収益率',
+                monthlyReturn: '月次リターン',
+                comparison: '利息比較',
+                difference: '差額',
+                openAccount: '今すぐFD口座を開設'
+            },
+            hi: {
+                back: 'वापस',
+                tagline: 'उन्नत सावधि जमा कैलकुलेटर',
+                language: 'भाषा',
+                currency: 'मुद्रा',
+                simpleInterest: 'साधारण ब्याज',
+                compoundInterest: 'चक्रवृद्धि ब्याज',
+                selectProduct: 'CashCached उत्पाद चुनें',
+                depositAmount: 'जमा राशि',
+                tenure: 'अवधि',
+                months: 'महीने',
+                interestRate: 'ब्याज दर',
+                compoundFrequency: 'चक्रवृद्धि आवृत्ति',
+                annually: 'वार्षिक',
+                halfYearly: 'अर्धवार्षिक',
+                quarterly: 'त्रैमासिक',
+                monthly: 'मासिक',
+                calculate: 'रिटर्न की गणना करें',
+                yourReturns: 'आपका रिटर्न',
+                principalAmount: 'मूल राशि',
+                interestEarned: 'अर्जित ब्याज',
+                maturityAmount: 'परिपक्वता राशि',
+                maturityDate: 'परिपक्वता तिथि',
+                effectiveRate: 'प्रभावी दर',
+                roi: 'निवेश पर रिटर्न',
+                monthlyReturn: 'मासिक रिटर्न',
+                comparison: 'ब्याज तुलना',
+                difference: 'अंतर',
+                openAccount: 'अभी FD खाता खोलें'
+            },
+            ar: {
+                back: 'رجوع',
+                tagline: 'حاسبة الودائع الثابتة المتقدمة',
+                language: 'اللغة',
+                currency: 'العملة',
+                simpleInterest: 'فائدة بسيطة',
+                compoundInterest: 'فائدة مركبة',
+                selectProduct: 'اختر منتج CashCached',
+                depositAmount: 'مبلغ الإيداع',
+                tenure: 'المدة',
+                months: 'أشهر',
+                interestRate: 'معدل الفائدة',
+                compoundFrequency: 'تكرار الفائدة المركبة',
+                annually: 'سنوياً',
+                halfYearly: 'نصف سنوي',
+                quarterly: 'ربع سنوي',
+                monthly: 'شهري',
+                calculate: 'احسب العوائد',
+                yourReturns: 'عوائدك',
+                principalAmount: 'المبلغ الأساسي',
+                interestEarned: 'الفائدة المكتسبة',
+                maturityAmount: 'مبلغ الاستحقاق',
+                maturityDate: 'تاريخ الاستحقاق',
+                effectiveRate: 'المعدل الفعلي',
+                roi: 'العائد على الاستثمار',
+                monthlyReturn: 'العائد الشهري',
+                comparison: 'مقارنة الفائدة',
+                difference: 'الفرق',
+                openAccount: 'افتح حساب FD الآن'
+            }
+        };
+        
+        // Currency Configuration
+        const currencyConfig = {
+            USD: { symbol: '$', decimals: 2, locale: 'en-US', position: 'prefix' },
+            INR: { symbol: '₹', decimals: 2, locale: 'en-IN', position: 'prefix' },
+            KWD: { symbol: 'د.ك', decimals: 3, locale: 'ar-KW', position: 'suffix' }
+        };
+        
+        // Exchange Rates (relative to USD)
+        const exchangeRates = {
+            USD: 1,
+            INR: 83.12,
+            KWD: 0.31
+        };
+        
+        // State
+        let currentLanguage = 'en';
+        let currentCurrency = 'USD';
+        let calcType = 'simple';
+        let products = [];
+        let selectedProduct = null;
+        let chartInstance = null;
+        
+        const BASE_URL = window.__FD_CONTEXT__ || '/fd-simulator';
+        
+        // Language Functions
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('[id^="lang-"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('lang-' + lang).classList.add('active');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    elem.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update select options
+            document.querySelectorAll('[data-i18n-option]').forEach(option => {
+                const key = option.getAttribute('data-i18n-option');
+                if (translations[lang] && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+            
+            // Re-update dynamic values
+            updateSliderValues();
+            
+            // Save preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+        
+        // Currency Functions
+        function changeCurrency(currency) {
+            currentCurrency = currency;
+            
+            // Update button states
+            document.querySelectorAll('[id^="curr-"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('curr-' + currency).classList.add('active');
+            
+            // Update all currency displays
+            updateSliderValues();
+            
+            // Recalculate if results are shown
+            if (document.getElementById('resultsCard').style.display !== 'none') {
+                calculateReturns();
+            }
+            
+            // Save preference
+            localStorage.setItem('preferredCurrency', currency);
+        }
+        
+        function formatCurrency(amount, currency = currentCurrency) {
+            const config = currencyConfig[currency];
+            const formatted = amount.toLocaleString(config.locale, {
+                minimumFractionDigits: config.decimals,
+                maximumFractionDigits: config.decimals
+            });
+            
+            return config.position === 'prefix' 
+                ? config.symbol + formatted 
+                : formatted + ' ' + config.symbol;
+        }
+        
+        function convertCurrency(amountUSD, toCurrency) {
+            return amountUSD * exchangeRates[toCurrency];
+        }
+        
+        // Calculation Type
+        function setCalcType(type) {
+            calcType = type;
+            
+            document.querySelectorAll('.calc-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('calc-' + type).classList.add('active');
+            
+            // Show/hide compound frequency
+            document.getElementById('compoundFrequencyGroup').style.display = 
+                type === 'compound' ? 'block' : 'none';
+            
+            // Recalculate if results shown
+            if (document.getElementById('resultsCard').style.display !== 'none') {
+                calculateReturns();
+            }
+        }
+        
+        // Load Products
+        async function loadProducts() {
+            try {
+                const response = await fetch(BASE_URL + '/api/public/products/active');
+                products = await response.json();
+                
+                const container = document.getElementById('productsGrid');
+                container.innerHTML = '';
+                
+                if (products.length === 0) {
+                    container.innerHTML = '<p class="text-center">No products available</p>';
+                    return;
+                }
+                
+                products.forEach((product, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card' + (index === 0 ? ' selected' : '');
+                    card.onclick = () => selectProduct(product, card);
+                    
+                    const minAmount = convertCurrency(product.minAmount, currentCurrency);
+                    const maxAmount = convertCurrency(product.maxAmount, currentCurrency);
+                    
+                    card.innerHTML = `
+                        <div class="product-name">${product.productName}</div>
+                        <div class="product-rate">${product.interestRate}%</div>
+                        <div class="product-details">
+                            <div><i class="fas fa-money-bill"></i> ${formatCurrency(minAmount)} - ${formatCurrency(maxAmount)}</div>
+                            <div><i class="fas fa-calendar"></i> ${product.minTenureMonths}-${product.maxTenureMonths} ${translations[currentLanguage].months}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                
+                // Select first product by default
+                if (products.length > 0) {
+                    const firstCard = container.querySelector('.product-card');
+                    selectProduct(products[0], firstCard);
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsGrid').innerHTML = 
+                    '<p class="text-center" style="color: #ef4444;">Error loading products</p>';
+            }
+        }
+        
+        function selectProduct(product, cardElement) {
+            selectedProduct = product;
+            
+            // Update UI
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            if (cardElement) {
+                cardElement.classList.add('selected');
+            }
+            
+            // Update sliders with converted amounts
+            const amountSlider = document.getElementById('amountSlider');
+            const tenureSlider = document.getElementById('tenureSlider');
+            
+            const minAmount = convertCurrency(product.minAmount, currentCurrency);
+            const maxAmount = convertCurrency(product.maxAmount, currentCurrency);
+            
+            amountSlider.min = minAmount;
+            amountSlider.max = maxAmount;
+            amountSlider.value = minAmount;
+            amountSlider.step = minAmount < 10000 ? 100 : 1000;
+            
+            tenureSlider.min = product.minTenureMonths;
+            tenureSlider.max = product.maxTenureMonths;
+            tenureSlider.value = product.minTenureMonths;
+            
+            // Update labels
+            document.getElementById('minAmountLabel').textContent = formatCurrency(minAmount);
+            document.getElementById('maxAmountLabel').textContent = formatCurrency(maxAmount);
+            document.getElementById('minTenureLabel').textContent = product.minTenureMonths;
+            document.getElementById('maxTenureLabel').textContent = product.maxTenureMonths;
+            document.getElementById('rateValue').textContent = product.interestRate + '%';
+            
+            updateSliderValues();
+        }
+        
+        function updateSliderValues() {
+            const amount = parseFloat(document.getElementById('amountSlider').value);
+            const tenure = parseInt(document.getElementById('tenureSlider').value);
+            
+            document.getElementById('amountValue').textContent = formatCurrency(amount);
+            document.getElementById('tenureValue').innerHTML = 
+                tenure + ' <span data-i18n="months">' + translations[currentLanguage].months + '</span>';
+        }
+        
+        function calculateReturns() {
+            if (!selectedProduct) {
+                alert('Please select a product');
+                return;
+            }
+            
+            const principal = parseFloat(document.getElementById('amountSlider').value);
+            const tenureMonths = parseInt(document.getElementById('tenureSlider').value);
+            const rate = selectedProduct.interestRate;
+            const timeInYears = tenureMonths / 12;
+            
+            let interest, maturity;
+            
+            if (calcType === 'simple') {
+                // Simple Interest: SI = P * R * T / 100
+                interest = (principal * rate * timeInYears) / 100;
+                maturity = principal + interest;
+            } else {
+                // Compound Interest: A = P(1 + r/n)^(nt)
+                const frequency = parseInt(document.getElementById('compoundFrequency').value);
+                const ratePerPeriod = rate / (100 * frequency);
+                const totalPeriods = frequency * timeInYears;
+                maturity = principal * Math.pow(1 + ratePerPeriod, totalPeriods);
+                interest = maturity - principal;
+            }
+            
+            // Calculate comparison (both methods)
+            const simpleInterest = (principal * rate * timeInYears) / 100;
+            const frequency = 4; // Quarterly
+            const compoundMaturity = principal * Math.pow(1 + rate / (100 * frequency), frequency * timeInYears);
+            const compoundInterest = compoundMaturity - principal;
+            const difference = compoundInterest - simpleInterest;
+            
+            // Calculate additional metrics
+            const roi = ((maturity - principal) / principal) * 100;
+            const effectiveRate = (Math.pow(maturity / principal, 1 / timeInYears) - 1) * 100;
+            const monthlyReturn = interest / tenureMonths;
+            
+            // Calculate maturity date
+            const maturityDate = new Date();
+            maturityDate.setMonth(maturityDate.getMonth() + tenureMonths);
+            
+            // Display results
+            document.getElementById('principalDisplay').textContent = formatCurrency(principal);
+            document.getElementById('interestDisplay').textContent = formatCurrency(interest);
+            document.getElementById('maturityDisplay').textContent = formatCurrency(maturity);
+            document.getElementById('maturityDateDisplay').textContent = maturityDate.toLocaleDateString(
+                currencyConfig[currentCurrency].locale, 
+                { year: 'numeric', month: 'long', day: 'numeric' }
+            );
+            document.getElementById('effectiveRateDisplay').textContent = effectiveRate.toFixed(2) + '% p.a.';
+            document.getElementById('roiDisplay').textContent = roi.toFixed(2) + '%';
+            document.getElementById('monthlyReturnDisplay').textContent = formatCurrency(monthlyReturn);
+            
+            // Display comparison
+            document.getElementById('simpleComparison').textContent = formatCurrency(simpleInterest);
+            document.getElementById('compoundComparison').textContent = formatCurrency(compoundInterest);
+            document.getElementById('differenceComparison').textContent = formatCurrency(difference);
+            
+            // Show results
+            document.getElementById('resultsCard').style.display = 'block';
+            document.getElementById('chartContainer').style.display = 'block';
+            document.getElementById('ctaSection').style.display = 'block';
+            document.getElementById('comparisonSection').style.display = 'block';
+            
+            // Update chart
+            updateChart(principal, interest, maturity, tenureMonths);
+        }
+        
+        function updateChart(principal, interest, maturity, tenureMonths) {
+            const ctx = document.getElementById('fdChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            // Create gradient
+            const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient1.addColorStop(0, '#FF5BBE');
+            gradient1.addColorStop(1, '#FF0099');
+            
+            const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient2.addColorStop(0, '#7C3AED');
+            gradient2.addColorStop(1, '#00F0FF');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        translations[currentLanguage].principalAmount, 
+                        translations[currentLanguage].interestEarned
+                    ],
+                    datasets: [{
+                        data: [principal, interest],
+                        backgroundColor: [gradient1, gradient2],
+                        borderWidth: 0,
+                        borderRadius: 10,
+                        spacing: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: var(--light-text),
+                                font: {
+                                    size: 13,
+                                    weight: '600',
+                                    family: 'Inter'
+                                },
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: translations[currentLanguage].comparison || 'Investment Breakdown',
+                            color: var(--light-text),
+                            font: {
+                                size: 18,
+                                weight: '700',
+                                family: 'Inter'
+                            },
+                            padding: {
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(13, 13, 18, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 91, 190, 0.5)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + formatCurrency(context.parsed);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Navigation
+        function goBack() {
+            window.location.href = BASE_URL + '/cashcached';
+        }
+        
+        function goToLogin() {
+            window.location.href = BASE_URL + '/login';
+        }
+        
+        // Event Listeners
+        document.getElementById('amountSlider').addEventListener('input', updateSliderValues);
+        document.getElementById('tenureSlider').addEventListener('input', updateSliderValues);
+        
+        // Initialize
+        function init() {
+            // Load saved preferences
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            const savedCurr = localStorage.getItem('preferredCurrency') || 'USD';
+            
+            if (savedLang !== 'en') changeLanguage(savedLang);
+            if (savedCurr !== 'USD') changeCurrency(savedCurr);
+            
+            loadProducts();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

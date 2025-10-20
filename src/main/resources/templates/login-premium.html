@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CashCached</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1f3a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating Background Circles */
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            animation: float 25s infinite ease-in-out;
+            filter: blur(60px);
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 7s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            top: 40%;
+            right: 15%;
+            animation-delay: 14s;
+        }
+
+        .bg-circle:nth-child(4) {
+            width: 300px;
+            height: 300px;
+            bottom: 20%;
+            left: 10%;
+            animation-delay: 21s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            25% { transform: translate(50px, -50px) scale(1.1); opacity: 0.5; }
+            50% { transform: translate(-30px, 30px) scale(0.9); opacity: 0.4; }
+            75% { transform: translate(40px, 20px) scale(1.05); opacity: 0.45; }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 50px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6); }
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px 14px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-google {
+            color: #ea4335;
+        }
+
+        .btn-google:hover {
+            border-color: #ea4335;
+            background: rgba(234, 67, 53, 0.1);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Links */
+        .text-link {
+            color: #818cf8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .text-link:hover {
+            color: #a5b4fc;
+            text-decoration: underline;
+        }
+
+        .text-center {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Error/Success Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Loading State */
+        .btn-primary.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* OTP Input */
+        .otp-inputs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 55px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 40px 30px;
+            }
+
+            .logo h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <h1>CashCached</h1>
+                <p>Secure Banking Platform</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('password')">
+                    <i class="fas fa-lock"></i> Password
+                </button>
+                <button class="tab-btn" onclick="switchTab('phone')">
+                    <i class="fas fa-mobile-alt"></i> Phone
+                </button>
+                <button class="tab-btn" onclick="switchTab('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div class="message error" id="errorMessage"></div>
+            <div class="message success" id="successMessage"></div>
+
+            <!-- Password Login Tab -->
+            <div class="tab-content active" id="password-tab">
+                <form onsubmit="handlePasswordLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-bottom: 20px;">
+                        <a href="#" class="text-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+            </div>
+
+            <!-- Phone/OTP Login Tab -->
+            <div class="tab-content" id="phone-tab">
+                <div id="phone-step">
+                    <form onsubmit="handlePhoneSendOTP(event)">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input type="tel" class="form-control" id="phoneNumber" placeholder="+1234567890" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="sendOtpBtn">
+                            <i class="fas fa-paper-plane"></i> Send OTP
+                        </button>
+                    </form>
+                </div>
+
+                <div id="otp-step" style="display: none;">
+                    <form onsubmit="handleOTPVerify(event)">
+                        <div class="form-group">
+                            <label class="form-label" style="text-align: center;">Enter OTP Code</label>
+                            <div class="otp-inputs">
+                                <input type="text" class="otp-input" maxlength="1" id="otp1">
+                                <input type="text" class="otp-input" maxlength="1" id="otp2">
+                                <input type="text" class="otp-input" maxlength="1" id="otp3">
+                                <input type="text" class="otp-input" maxlength="1" id="otp4">
+                                <input type="text" class="otp-input" maxlength="1" id="otp5">
+                                <input type="text" class="otp-input" maxlength="1" id="otp6">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="verifyOtpBtn">
+                            <i class="fas fa-check"></i> Verify OTP
+                        </button>
+
+                        <div style="text-align: center; margin-top: 15px;">
+                            <a href="#" class="text-link" onclick="resendOTP()">Resend OTP</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Google Login Tab -->
+            <div class="tab-content" id="google-tab">
+                <p style="color: rgba(255, 255, 255, 0.6); text-align: center; margin-bottom: 20px; font-size: 14px;">
+                    Sign in with your Google account for quick and secure access
+                </p>
+
+                <button type="button" class="btn-secondary btn-google" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google" style="font-size: 20px;"></i>
+                    Continue with Google
+                </button>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                    <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px; text-align: center; margin: 0;">
+                        <i class="fas fa-shield-alt"></i> Your data is protected with enterprise-grade security
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center">
+                Don't have an account? <a href="/fd-simulator/register" class="text-link">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + '-tab').classList.add('active');
+
+            // Clear messages
+            hideMessages();
+        }
+
+        // Password Login
+        async function handlePasswordLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            hideMessages();
+            loginBtn.classList.add('loading');
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Signing In';
+            
+            try {
+                const response = await fetch('/fd-simulator/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (!response.ok) throw new Error('Invalid credentials');
+                
+                const data = await response.json();
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.role);
+                
+                // Redirect based on role
+                window.location.href = data.role === 'ADMIN' 
+                    ? '/fd-simulator/admin/dashboard' 
+                    : '/fd-simulator/customer/dashboard';
+            } catch (error) {
+                showError(error.message);
+                loginBtn.classList.remove('loading');
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            }
+        }
+
+        // Phone OTP - Send
+        async function handlePhoneSendOTP(event) {
+            event.preventDefault();
+            
+            const phone = document.getElementById('phoneNumber').value;
+            const sendBtn = document.getElementById('sendOtpBtn');
+            
+            hideMessages();
+            sendBtn.classList.add('loading');
+            
+            try {
+                // TODO: Implement actual OTP sending
+                // For now, simulate success
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                showSuccess('OTP sent to ' + phone);
+                document.getElementById('phone-step').style.display = 'none';
+                document.getElementById('otp-step').style.display = 'block';
+                
+                // Focus first OTP input
+                document.getElementById('otp1').focus();
+            } catch (error) {
+                showError('Failed to send OTP');
+            } finally {
+                sendBtn.classList.remove('loading');
+            }
+        }
+
+        // Phone OTP - Verify
+        async function handleOTPVerify(event) {
+            event.preventDefault();
+            
+            const otp = ['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6']
+                .map(id => document.getElementById(id).value)
+                .join('');
+            
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+            
+            hideMessages();
+            verifyBtn.classList.add('loading');
+            
+            try {
+                // TODO: Implement actual OTP verification
+                // For now, simulate success
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                showSuccess('Login successful!');
+                setTimeout(() => {
+                    window.location.href = '/fd-simulator/customer/dashboard';
+                }, 1000);
+            } catch (error) {
+                showError('Invalid OTP');
+                verifyBtn.classList.remove('loading');
+            }
+        }
+
+        // Google Login
+        function handleGoogleLogin() {
+            // TODO: Implement actual Google OAuth
+            // For now, redirect to Google OAuth endpoint
+            showError('Google OAuth not yet configured. Please use password login.');
+            // window.location.href = '/fd-simulator/oauth2/authorization/google';
+        }
+
+        // OTP Input Auto-focus
+        document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Resend OTP
+        function resendOTP() {
+            event.preventDefault();
+            showSuccess('OTP resent successfully');
+        }
+
+        // Message Helpers
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.classList.add('show');
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        // Auto-fill for demo
+        if (window.location.search.includes('demo')) {
+            document.getElementById('username').value = 'admin';
+            document.getElementById('password').value = 'admin123';
+        }
+    </script>
+</body>
+</html>

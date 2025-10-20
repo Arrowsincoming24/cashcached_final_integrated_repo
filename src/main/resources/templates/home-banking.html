@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashCached - India's Premier Fixed Deposit Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(26, 31, 58, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 60px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 56px;
+            font-weight: 800;
+            color: white;
+            margin: 0 0 24px 0;
+            line-height: 1.1;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 0 32px 0;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .hero-stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Features Section */
+        .section {
+            padding: 100px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 40px 32px;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 24px;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Products Section */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            padding: 32px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-4px);
+        }
+
+        .product-rate {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .product-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+
+        .product-features li {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .product-features li i {
+            color: #10b981;
+            margin-right: 8px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 32px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 60px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 40px;
+        }
+
+        .footer-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .features-grid,
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 20px 30px;
+            }
+
+            .section {
+                padding: 60px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/fd-simulator/" class="logo-brand">
+            <span class="logo-infinity">∞</span>
+            <span class="logo-text">CASHCACHED</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#products" class="nav-link">Products</a>
+            <a href="/fd-simulator/fd-calculator" class="nav-link">Calculator</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="/fd-simulator/login" class="btn btn-secondary">Login</a>
+            <a href="/fd-simulator/register" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Secure Your Future with Premium Fixed Deposits</h1>
+                <p>
+                    Experience hassle-free banking with competitive interest rates up to 7.75%, 
+                    flexible tenure options, and guaranteed returns backed by bank-grade security.
+                </p>
+                <div style="display: flex; gap: 16px;">
+                    <a href="/fd-simulator/fd-calculator" class="btn btn-primary" style="padding: 16px 32px; font-size: 16px;">
+                        <i class="fas fa-calculator"></i> Calculate Returns
+                    </a>
+                    <a href="/fd-simulator/register" class="btn btn-secondary" style="padding: 16px 32px; font-size: 16px;">
+                        <i class="fas fa-rocket"></i> Open Account
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">50K+</div>
+                        <div class="hero-stat-label">Happy Customers</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">₹500Cr+</div>
+                        <div class="hero-stat-label">Deposits Managed</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">7.75%</div>
+                        <div class="hero-stat-label">Max Interest Rate</div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 40px;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <span class="badge badge-primary">India's Most Trusted FD Platform</span>
+                </div>
+                <h3 style="color: white; text-align: center; margin-bottom: 24px;">Why Choose CashCached?</h3>
+                <div style="display: grid; gap: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 20px; margin-top: 2px;"></i>
+                        <div>
+                            <div style="color: white; font-weight: 600; margin-bottom: 4px;">Competitive Rates</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 14px;">Up to 7.75% interest rates</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 20px; margin-top: 2px;"></i>
+                        <div>
+                            <div style="color: white; font-weight: 600; margin-bottom: 4px;">Flexible Tenure</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 14px;">From 3 months to 10 years</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 20px; margin-top: 2px;"></i>
+                        <div>
+                            <div style="color: white; font-weight: 600; margin-bottom: 4px;">100% Secure</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 14px;">Bank-grade security</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 20px; margin-top: 2px;"></i>
+                        <div>
+                            <div style="color: white; font-weight: 600; margin-bottom: 4px;">Quick Processing</div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 14px;">Account opens in minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <h2 class="section-title">Why Invest with CashCached?</h2>
+        <p class="section-subtitle">Experience the best in fixed deposit banking</p>
+        
+        <div class="features-grid">
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">100% Secure</h3>
+                <p class="feature-desc">
+                    Your investments are protected with bank-grade security and encryption. 
+                    All deposits are insured and backed by regulatory compliance.
+                </p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Best Returns</h3>
+                <p class="feature-desc">
+                    Earn competitive interest rates up to 7.75% with guaranteed returns. 
+                    Choose from multiple tenure options to maximize your earnings.
+                </p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="feature-title">Flexible Tenure</h3>
+                <p class="feature-desc">
+                    Select from a wide range of tenure options from 3 months to 10 years. 
+                    Customize your investment to match your financial goals.
+                </p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Digital First</h3>
+                <p class="feature-desc">
+                    Open your FD account in minutes with our fully digital process. 
+                    Manage your investments anytime, anywhere with our platform.
+                </p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3 class="feature-title">Smart Calculator</h3>
+                <p class="feature-desc">
+                    Use our advanced FD calculator to plan your investments. 
+                    See real-time projections of your returns before investing.
+                </p>
+            </div>
+
+            <div class="glass-card feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="feature-title">24/7 Support</h3>
+                <p class="feature-desc">
+                    Our dedicated support team is available round the clock to assist you. 
+                    Get help whenever you need it through multiple channels.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section" id="products" style="background: rgba(0,0,0,0.2);">
+        <h2 class="section-title">Our Fixed Deposit Plans</h2>
+        <p class="section-subtitle">Choose the plan that fits your financial goals</p>
+        
+        <div class="products-grid">
+            <div class="glass-card product-card">
+                <div class="product-rate">6.5%</div>
+                <h3 class="product-name">Short Term FD</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> 3-12 months tenure</li>
+                    <li><i class="fas fa-check"></i> Minimum ₹10,000</li>
+                    <li><i class="fas fa-check"></i> Quarterly interest payout</li>
+                    <li><i class="fas fa-check"></i> Premature withdrawal allowed</li>
+                </ul>
+                <a href="/fd-simulator/register" class="btn btn-primary" style="width: 100%;">
+                    Open Account
+                </a>
+            </div>
+
+            <div class="glass-card product-card">
+                <div class="product-rate">7.25%</div>
+                <h3 class="product-name">Medium Term FD</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> 1-3 years tenure</li>
+                    <li><i class="fas fa-check"></i> Minimum ₹25,000</li>
+                    <li><i class="fas fa-check"></i> Monthly/Quarterly payout</li>
+                    <li><i class="fas fa-check"></i> Auto-renewal option</li>
+                </ul>
+                <a href="/fd-simulator/register" class="btn btn-primary" style="width: 100%;">
+                    Open Account
+                </a>
+            </div>
+
+            <div class="glass-card product-card">
+                <div class="product-rate">7.75%</div>
+                <h3 class="product-name">Long Term FD</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> 3-10 years tenure</li>
+                    <li><i class="fas fa-check"></i> Minimum ₹50,000</li>
+                    <li><i class="fas fa-check"></i> Cumulative interest</li>
+                    <li><i class="fas fa-check"></i> Tax benefits available</li>
+                </ul>
+                <a href="/fd-simulator/register" class="btn btn-primary" style="width: 100%;">
+                    Open Account
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to Start Your Investment Journey?</h2>
+        <p>Join thousands of smart investors who trust CashCached for their fixed deposit needs</p>
+        <div style="display: flex; gap: 16px; justify-content: center;">
+            <a href="/fd-simulator/register" class="btn" style="background: white; color: #6366f1; padding: 16px 32px; font-size: 16px;">
+                <i class="fas fa-user-plus"></i> Create Free Account
+            </a>
+            <a href="/fd-simulator/fd-calculator" class="btn btn-secondary" style="padding: 16px 32px; font-size: 16px;">
+                <i class="fas fa-calculator"></i> Calculate Returns
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="about">
+        <div class="footer-content">
+            <div>
+                <div class="logo-brand" style="margin-bottom: 16px;">
+                    <span class="logo-infinity">∞</span>
+                    <span class="logo-text">CASHCACHED</span>
+                </div>
+                <p class="footer-text">
+                    India's premier fixed deposit platform offering competitive rates, 
+                    flexible tenure options, and guaranteed returns backed by bank-grade security.
+                </p>
+            </div>
+            <div>
+                <h4 class="footer-title">Products</h4>
+                <ul class="footer-links">
+                    <li><a href="#products">Short Term FD</a></li>
+                    <li><a href="#products">Medium Term FD</a></li>
+                    <li><a href="#products">Long Term FD</a></li>
+                    <li><a href="/fd-simulator/fd-calculator">FD Calculator</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="/fd-simulator/login">Login</a></li>
+                    <li><a href="/fd-simulator/register">Register</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="/fd-simulator/swagger-ui/index.html">API Docs</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 CashCached. All rights reserved. | Secure Banking Platform | Premium Fixed Deposits</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashCached - Premium Fixed Deposit Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin: 24px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stats-section {
+            padding: 60px 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="top-bar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100;">
+        <a href="/fd-simulator/" class="logo-brand">
+            <span class="logo-infinity">∞</span>
+            <span class="logo-text">CASHCACHED</span>
+        </a>
+        <div style="display: flex; gap: 12px;">
+            <a href="/fd-simulator/login" class="btn btn-secondary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="/fd-simulator/register" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="glass-card" style="padding: 60px 40px;">
+                <span class="badge badge-primary" style="font-size: 14px; margin-bottom: 20px;">
+                    <i class="fas fa-star"></i> India's Most Trusted FD Platform
+                </span>
+                <h1>Welcome to CASHCACHED</h1>
+                <p>
+                    Secure Your Future with Our Premium Fixed Deposit Plans.<br>
+                    Experience hassle-free banking with competitive interest rates up to 7.75%,<br>
+                    flexible tenure options, and guaranteed returns backed by bank-grade security.
+                </p>
+                <div class="cta-buttons">
+                    <a href="/fd-simulator/fd-calculator" class="btn btn-primary" style="padding: 16px 32px; font-size: 16px;">
+                        <i class="fas fa-calculator"></i> Calculate Your Returns
+                    </a>
+                    <a href="/fd-simulator/register" class="btn btn-secondary" style="padding: 16px 32px; font-size: 16px;">
+                        <i class="fas fa-rocket"></i> Get Started Free
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">50K+</div>
+                <div class="stat-label">Happy Customers</div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 8px;">
+                    Trusted by thousands of investors across India
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-value">₹500Cr+</div>
+                <div class="stat-label">Deposits Managed</div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 8px;">
+                    Secure and growing investment portfolio
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-value">7.75%</div>
+                <div class="stat-label">Max Interest Rate</div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 8px;">
+                    Competitive rates for maximum returns
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Secure & Safe</div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 8px;">
+                    Bank-grade security for your investments
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="stats-section">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2 style="text-align: center; font-size: 42px; margin-bottom: 48px; color: white;">
+                Why Choose CashCached?
+            </h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                <div class="glass-card">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+                    <h3 style="color: white; margin-bottom: 12px;">Quick & Easy</h3>
+                    <p style="color: rgba(255,255,255,0.7);">
+                        Open your FD account in minutes with our streamlined digital process
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <div style="font-size: 48px; margin-bottom: 16px;">💰</div>
+                    <h3 style="color: white; margin-bottom: 12px;">Best Rates</h3>
+                    <p style="color: rgba(255,255,255,0.7);">
+                        Competitive interest rates up to 7.75% with flexible tenure options
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+                    <h3 style="color: white; margin-bottom: 12px;">100% Secure</h3>
+                    <p style="color: rgba(255,255,255,0.7);">
+                        Your investments are protected with bank-grade security measures
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="stats-section">
+        <div class="glass-card" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 40px;">
+            <h2 style="font-size: 36px; margin-bottom: 16px; color: white;">Ready to Start Investing?</h2>
+            <p style="font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 32px;">
+                Join thousands of smart investors who trust CashCached for their fixed deposit needs
+            </p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="/fd-simulator/register" class="btn btn-primary" style="padding: 16px 32px; font-size: 16px;">
+                    <i class="fas fa-user-plus"></i> Create Free Account
+                </a>
+                <a href="/fd-simulator/fd-calculator" class="btn btn-secondary" style="padding: 16px 32px; font-size: 16px;">
+                    <i class="fas fa-calculator"></i> Calculate Returns
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.5); position: relative; z-index: 1;">
+        <div class="logo-brand" style="justify-content: center; margin-bottom: 16px;">
+            <span class="logo-infinity">∞</span>
+            <span class="logo-text">CASHCACHED</span>
+        </div>
+        <p style="margin: 0;">© 2025 CashCached. All rights reserved.</p>
+        <p style="margin: 8px 0 0 0; font-size: 14px;">Secure Banking Platform | Premium Fixed Deposits</p>
+    </footer>
+</body>
+</html>

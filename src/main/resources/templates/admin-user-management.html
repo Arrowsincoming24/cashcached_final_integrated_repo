@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - CashCached</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .btn-edit:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input {
+            padding-left: 45px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div style="padding: 32px; position: relative; z-index: 1;">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1><i class="fas fa-users"></i> User Management</h1>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" onclick="window.location.href='/fd-simulator/admin/dashboard'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <button class="btn btn-primary" onclick="showCreateUserModal()">
+                    <i class="fas fa-user-plus"></i> Create New User
+                </button>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search users by name, email, or username..." onkeyup="filterUsers()">
+                </div>
+                <select class="form-control" id="roleFilter" onchange="filterUsers()" style="width: 200px;">
+                    <option value="">All Roles</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="CUSTOMER">Customer</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="glass-card">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-list"></i> All Users</h3>
+            
+            <div id="loadingMessage" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                <div class="spinner" style="margin: 0 auto 16px;"></div>
+                Loading users...
+            </div>
+
+            <div id="errorMessage" style="display: none; text-align: center; padding: 40px; color: #f87171;">
+                <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                <p>Failed to load users</p>
+            </div>
+
+            <div id="emptyMessage" style="display: none; text-align: center; padding: 40px; color: rgba(255,255,255,0.6);">
+                <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                <p>No users found</p>
+            </div>
+
+            <div class="table-container" id="usersTable" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit User Modal -->
+    <div id="userModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="glass-card" style="width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Create New User</h2>
+            
+            <form id="userForm" onsubmit="saveUser(event)" style="margin-top: 24px;">
+                <input type="hidden" id="userId">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <label class="form-label">First Name *</label>
+                        <input type="text" class="form-control" id="firstName" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" class="form-control" id="lastName" required>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label class="form-label">Username *</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="phone">
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label class="form-label">Password *</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label class="form-label">Role *</label>
+                    <select class="form-control" id="role" required>
+                        <option value="CUSTOMER">Customer</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()" style="flex: 1;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-save"></i> Save User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/fd-simulator/api/admin';
+        const token = localStorage.getItem('token');
+
+        // Load users on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!token) {
+                window.location.href = '/fd-simulator/login';
+                return;
+            }
+            loadUsers();
+        });
+
+        async function loadUsers() {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const emptyEl = document.getElementById('emptyMessage');
+            const tableEl = document.getElementById('usersTable');
+
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            emptyEl.style.display = 'none';
+            tableEl.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load users');
+
+                const users = await response.json();
+                
+                loadingEl.style.display = 'none';
+
+                if (!users || users.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                displayUsers(users);
+                tableEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading users:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const initials = (user.firstName?.charAt(0) || '') + (user.lastName?.charAt(0) || '');
+                const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+                
+                tbody.innerHTML += `
+                    <tr data-username="${user.username}" data-email="${user.email}" data-role="${user.role}">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="user-avatar">${initials}</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">
+                                        ${user.firstName || ''} ${user.lastName || ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.username || 'N/A'}</td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.phoneNumber || 'N/A'}</td>
+                        <td><span class="badge badge-${user.role === 'ADMIN' ? 'primary' : 'success'}">${user.role || 'CUSTOMER'}</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>${createdDate}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="action-btn btn-edit" onclick="editUser(${user.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn btn-delete" onclick="deleteUser(${user.id}, '${user.username}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const rows = document.querySelectorAll('#usersTableBody tr');
+
+            rows.forEach(row => {
+                const username = row.dataset.username?.toLowerCase() || '';
+                const email = row.dataset.email?.toLowerCase() || '';
+                const role = row.dataset.role || '';
+                
+                const matchesSearch = username.includes(searchTerm) || email.includes(searchTerm);
+                const matchesRole = !roleFilter || role === roleFilter;
+
+                row.style.display = matchesSearch && matchesRole ? '' : 'none';
+            });
+        }
+
+        function showCreateUserModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Create New User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        async function saveUser(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const userData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phone').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value
+            };
+
+            try {
+                const url = userId ? `${API_BASE}/users/${userId}` : `${API_BASE}/users`;
+                const method = userId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) throw new Error('Failed to save user');
+
+                closeUserModal();
+                loadUsers();
+                alert('User saved successfully!');
+            } catch (error) {
+                console.error('Error saving user:', error);
+                alert('Failed to save user: ' + error.message);
+            }
+        }
+
+        async function editUser(id) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load user');
+
+                const user = await response.json();
+                
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Edit User';
+                document.getElementById('userId').value = user.id;
+                document.getElementById('firstName').value = user.firstName || '';
+                document.getElementById('lastName').value = user.lastName || '';
+                document.getElementById('username').value = user.username || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phoneNumber || '';
+                document.getElementById('role').value = user.role || 'CUSTOMER';
+                document.getElementById('password').value = '';
+                document.getElementById('password').required = false;
+                
+                document.getElementById('userModal').style.display = 'flex';
+            } catch (error) {
+                console.error('Error loading user:', error);
+                alert('Failed to load user details');
+            }
+        }
+
+        async function deleteUser(id, username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete user');
+
+                loadUsers();
+                alert('User deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Failed to delete user: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

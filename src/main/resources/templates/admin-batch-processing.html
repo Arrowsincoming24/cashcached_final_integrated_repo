@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Processing - CashCached</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div style="padding: 32px; position: relative; z-index: 1;">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1><i class="fas fa-sync"></i> Batch Processing</h1>
+            <button class="btn btn-secondary" onclick="window.location.href='/fd-simulator/admin/dashboard'">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-chart-bar"></i> FD Summary</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-value" id="totalFDs">0</div>
+                    <div class="stat-label">Total FDs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="activeFDs">0</div>
+                    <div class="stat-label">Active FDs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="maturingFDs">0</div>
+                    <div class="stat-label">Maturing FDs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-value" id="maturedFDs">0</div>
+                    <div class="stat-label">Matured FDs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batch Actions -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-cogs"></i> Batch Actions</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div class="glass-card" style="background: rgba(99, 102, 241, 0.05);">
+                    <h4 style="margin-bottom: 12px; color: var(--text-primary);">
+                        <i class="fas fa-sync-alt"></i> Process Matured FDs
+                    </h4>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        Process all FDs that have reached their maturity date. This will update their status and calculate final amounts.
+                    </p>
+                    <button class="btn btn-primary" onclick="processMaturedFDs()" style="width: 100%;">
+                        <i class="fas fa-play"></i> Run Processing
+                    </button>
+                </div>
+
+                <div class="glass-card" style="background: rgba(16, 185, 129, 0.05);">
+                    <h4 style="margin-bottom: 12px; color: var(--text-primary);">
+                        <i class="fas fa-file-download"></i> Generate Summary Report
+                    </h4>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        Download a comprehensive CSV report of all FDs with their current status and calculations.
+                    </p>
+                    <button class="btn btn-success" onclick="downloadReport()" style="width: 100%;">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Log -->
+        <div class="glass-card">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-list"></i> Processing Log</h3>
+            
+            <div id="logContainer" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; max-height: 400px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px;">
+                <div style="color: var(--text-muted);">No processing logs yet. Run a batch process to see logs here.</div>
+            </div>
+        </div>
+
+        <!-- Information -->
+        <div class="glass-card" style="margin-top: 24px; background: rgba(99, 102, 241, 0.1);">
+            <h4 style="margin-bottom: 12px; color: var(--primary-light);"><i class="fas fa-info-circle"></i> About Batch Processing</h4>
+            <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                Batch processing allows you to perform bulk operations on Fixed Deposits. Use "Process Matured FDs" to automatically 
+                update the status of FDs that have reached maturity. Use "Generate Summary Report" to export all FD data for analysis.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/fd-simulator/api/admin';
+        const token = localStorage.getItem('token');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!token) {
+                window.location.href = '/fd-simulator/login';
+                return;
+            }
+            loadSummary();
+        });
+
+        async function loadSummary() {
+            try {
+                const response = await fetch(`${API_BASE}/batch/summary-report`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load summary');
+
+                const data = await response.json();
+                
+                document.getElementById('totalFDs').textContent = data.totalFDs || 0;
+                document.getElementById('activeFDs').textContent = data.activeFDs || 0;
+                document.getElementById('maturingFDs').textContent = data.maturingFDs || 0;
+                document.getElementById('maturedFDs').textContent = data.maturedFDs || 0;
+            } catch (error) {
+                console.error('Error loading summary:', error);
+                addLog('ERROR: Failed to load FD summary', 'error');
+            }
+        }
+
+        async function processMaturedFDs() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Processing...';
+
+            addLog('INFO: Starting batch processing of matured FDs...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/batch/process-matured`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to process FDs');
+
+                const result = await response.json();
+                
+                addLog(`SUCCESS: Processed ${result.processedCount || 0} FDs successfully`, 'success');
+                addLog(`INFO: ${result.details || 'Processing completed'}`, 'info');
+                
+                loadSummary();
+                alert('Batch processing completed successfully!');
+            } catch (error) {
+                console.error('Error processing FDs:', error);
+                addLog('ERROR: Failed to process matured FDs - ' + error.message, 'error');
+                alert('Failed to process FDs: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Run Processing';
+            }
+        }
+
+        async function downloadReport() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Generating...';
+
+            addLog('INFO: Generating summary report...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/batch/summary-report`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to generate report');
+
+                const data = await response.json();
+                
+                // Convert to CSV
+                const csv = convertToCSV(data);
+                
+                // Download
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fd-summary-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                
+                addLog('SUCCESS: Report downloaded successfully', 'success');
+                alert('Report downloaded successfully!');
+            } catch (error) {
+                console.error('Error downloading report:', error);
+                addLog('ERROR: Failed to download report - ' + error.message, 'error');
+                alert('Failed to download report: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-download"></i> Download Report';
+            }
+        }
+
+        function convertToCSV(data) {
+            const headers = Object.keys(data).join(',');
+            const values = Object.values(data).join(',');
+            return `${headers}\n${values}`;
+        }
+
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const colors = {
+                info: '#60a5fa',
+                success: '#6ee7b7',
+                error: '#f87171',
+                warning: '#fbbf24'
+            };
+
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '8px';
+            logEntry.style.color = colors[type] || colors.info;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            
+            // Remove placeholder if exists
+            if (logContainer.children.length === 1 && logContainer.firstChild.textContent.includes('No processing logs')) {
+                logContainer.innerHTML = '';
+            }
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>

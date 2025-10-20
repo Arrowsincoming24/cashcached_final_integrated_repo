@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - CashCached</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <div class="register-container">
+        <div class="register-card">
+            <div class="glass-card" style="padding: 50px 40px;">
+                <!-- Logo -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div class="logo-brand" style="justify-content: center; margin-bottom: 16px;">
+                        <span class="logo-infinity">∞</span>
+                        <span class="logo-text">CASHCACHED</span>
+                    </div>
+                    <h2 style="color: white; font-size: 28px; margin-bottom: 8px;">Create Account</h2>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 15px;">Join our Fixed Deposit Simulator</p>
+                </div>
+
+                <!-- Error Message -->
+                <div class="message error" id="errorMessage" style="display: none;"></div>
+
+                <!-- Registration Form -->
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-row">
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                                First Name *
+                            </label>
+                            <input type="text" class="form-control" id="firstName" placeholder="John" required>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Last Name *
+                            </label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Username *
+                        </label>
+                        <input type="text" class="form-control" id="username" placeholder="johndoe" required>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Email *
+                        </label>
+                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Phone Number
+                        </label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="+1234567890">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Password *
+                        </label>
+                        <input type="password" class="form-control" id="password" placeholder="Minimum 5 characters" required>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 13px; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Confirm Password *
+                        </label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8); font-size: 14px; cursor: pointer;">
+                            <input type="checkbox" required style="width: 18px; height: 18px;">
+                            <span>I agree to the Terms and Conditions</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="registerBtn" style="width: 100%; padding: 16px; font-size: 15px;">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: 24px; color: rgba(255,255,255,0.6); font-size: 14px;">
+                    Already have an account? <a href="/fd-simulator/login" style="color: #818cf8; text-decoration: none; font-weight: 600;">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 5) {
+                showError('Password must be at least 5 characters');
+                return;
+            }
+
+            const registerData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                password: password
+            };
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<div class="spinner"></div> Creating Account...';
+
+            try {
+                const response = await fetch('/fd-simulator/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registerData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error || 'Registration failed');
+                }
+
+                alert('Registration successful! Please login.');
+                window.location.href = '/fd-simulator/login';
+            } catch (error) {
+                showError(error.message);
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

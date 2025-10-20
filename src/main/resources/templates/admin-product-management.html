@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - CashCached</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1f3a;
+            color: white;
+        }
+        
+        .main-container {
+            padding: 30px;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-ACTIVE { background: #28a745; color: white; }
+        .status-INACTIVE { background: #6c757d; color: white; }
+        .status-SUSPENDED { background: #ffc107; color: black; }
+        .status-DRAFT { background: #17a2b8; color: white; }
+        
+        .nav-tabs .nav-link {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <div class="main-container" style="position: relative; z-index: 1;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-white"><i class="fas fa-box-open"></i> Product Management</h1>
+            <div>
+                <button class="btn btn-light me-2" onclick="window.location.href='/fd-simulator/admin/dashboard'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <button class="btn btn-success" onclick="showCreateProductModal()">
+                    <i class="fas fa-plus"></i> Create New Product
+                </button>
+            </div>
+        </div>
+        
+        <!-- Products List -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-list"></i> All Products</h4>
+            </div>
+            <div class="card-body">
+                <div class="row" id="productsContainer">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create/Edit Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Create Product</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Product Code</label>
+                                <input type="text" class="form-control" id="productCode" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Currency</label>
+                                <select class="form-control" id="currency">
+                                    <option value="INR">INR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="KWD">KWD</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-control" id="status">
+                                    <option value="DRAFT">Draft</option>
+                                    <option value="ACTIVE">Active</option>
+                                    <option value="INACTIVE">Inactive</option>
+                                    <option value="SUSPENDED">Suspended</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Min Amount</label>
+                                <input type="number" class="form-control" id="minAmount" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Max Amount</label>
+                                <input type="number" class="form-control" id="maxAmount" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Min Tenure (Months)</label>
+                                <input type="number" class="form-control" id="minTenureMonths" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Max Tenure (Months)</label>
+                                <input type="number" class="form-control" id="maxTenureMonths" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Interest Rate (%)</label>
+                            <input type="number" class="form-control" id="interestRate" step="0.01" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Details Modal -->
+    <div class="modal fade" id="productDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Product Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="productDetailsTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#basicInfo">Basic Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#rateMatrix">Rate Matrix</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#businessRules">Business Rules</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#termProfiles">Term Profiles</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="basicInfo">
+                            <div id="productBasicInfo"></div>
+                        </div>
+                        <div class="tab-pane fade" id="rateMatrix">
+                            <button class="btn btn-primary mb-3" onclick="showAddRateModal()">
+                                <i class="fas fa-plus"></i> Add Rate
+                            </button>
+                            <div id="rateMatrixTable"></div>
+                        </div>
+                        <div class="tab-pane fade" id="businessRules">
+                            <button class="btn btn-primary mb-3" onclick="showAddRuleModal()">
+                                <i class="fas fa-plus"></i> Add Rule
+                            </button>
+                            <div id="businessRulesTable"></div>
+                        </div>
+                        <div class="tab-pane fade" id="termProfiles">
+                            <button class="btn btn-primary mb-3" onclick="showAddTermProfileModal()">
+                                <i class="fas fa-plus"></i> Add Term Profile
+                            </button>
+                            <div id="termProfilesTable"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Rate Modal -->
+    <div class="modal fade" id="addRateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Interest Rate</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="rateForm">
+                        <div class="mb-3">
+                            <label class="form-label">Customer Type</label>
+                            <select class="form-control" id="rateCustomerType" required>
+                                <option value="RETAIL">Retail</option>
+                                <option value="CORPORATE">Corporate</option>
+                                <option value="SENIOR_CITIZEN">Senior Citizen</option>
+                                <option value="STAFF">Staff</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Term From (Days)</label>
+                                <input type="number" class="form-control" id="rateTermFromDays" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Term To (Days)</label>
+                                <input type="number" class="form-control" id="rateTermToDays" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Interest Rate (%)</label>
+                            <input type="number" class="form-control" id="rateInterestRate" step="0.01" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Effective From</label>
+                                <input type="date" class="form-control" id="rateEffectiveFrom" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Effective To</label>
+                                <input type="date" class="form-control" id="rateEffectiveTo">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRate()">Save Rate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentProductId = null;
+        const API_BASE = '/fd-simulator/api/admin';
+        
+        // Load all products on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
+        
+        function loadProducts() {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '<div class="col-12 text-center"><p class="text-white">Loading products...</p></div>';
+            
+            fetch(`${API_BASE}/products/summary`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(products => {
+                container.innerHTML = '';
+                
+                if (!products || products.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center"><p class="text-white">No products found. Click "Create New Product" to add one.</p></div>';
+                    return;
+                }
+                
+                products.forEach(product => {
+                    container.innerHTML += `
+                        <div class="col-md-4 mb-3">
+                            <div class="card product-card" onclick="viewProductDetails(${product.id})">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title">${product.productName || 'Unnamed Product'}</h5>
+                                        <span class="status-badge status-${product.status || 'ACTIVE'}">${product.status || 'ACTIVE'}</span>
+                                    </div>
+                                    <p class="text-muted small mb-2"><strong>Code:</strong> ${product.productCode || 'N/A'}</p>
+                                    <p class="card-text">${product.description || 'No description'}</p>
+                                    <p class="text-muted small mb-0"><strong>Currency:</strong> ${product.currency || 'INR'}</p>
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-primary me-2" onclick="event.stopPropagation(); editProduct(${product.id})">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteProduct(${product.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error loading products:', error);
+                container.innerHTML = `<div class="col-12 text-center"><p class="text-danger">Failed to load products: ${error.message}</p></div>`;
+            });
+        }
+        
+        function showCreateProductModal() {
+            document.getElementById('productModalTitle').textContent = 'Create Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            new bootstrap.Modal(document.getElementById('productModal')).show();
+        }
+        
+        function editProduct(id) {
+            fetch(`${API_BASE}/products/${id}/details`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(product => {
+                document.getElementById('productModalTitle').textContent = 'Edit Product';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productCode').value = product.productCode || '';
+                document.getElementById('productName').value = product.productName;
+                document.getElementById('description').value = product.description || '';
+                document.getElementById('currency').value = product.currency;
+                document.getElementById('status').value = product.status;
+                document.getElementById('minAmount').value = product.minAmount;
+                document.getElementById('maxAmount').value = product.maxAmount;
+                document.getElementById('minTenureMonths').value = product.minTenureMonths;
+                document.getElementById('maxTenureMonths').value = product.maxTenureMonths;
+                document.getElementById('interestRate').value = product.interestRate;
+                
+                new bootstrap.Modal(document.getElementById('productModal')).show();
+            })
+            .catch(error => {
+                console.error('Error loading product:', error);
+                alert('Failed to load product details');
+            });
+        }
+        
+        function saveProduct() {
+            const productId = document.getElementById('productId').value;
+            const isEdit = productId !== '';
+            
+            const productData = {
+                productCode: document.getElementById('productCode').value,
+                productName: document.getElementById('productName').value,
+                description: document.getElementById('description').value,
+                currency: document.getElementById('currency').value,
+                status: document.getElementById('status').value,
+                minAmount: parseFloat(document.getElementById('minAmount').value),
+                maxAmount: parseFloat(document.getElementById('maxAmount').value),
+                minTenureMonths: parseInt(document.getElementById('minTenureMonths').value),
+                maxTenureMonths: parseInt(document.getElementById('maxTenureMonths').value),
+                interestRate: parseFloat(document.getElementById('interestRate').value),
+                isActive: document.getElementById('status').value === 'ACTIVE'
+            };
+            
+            const url = isEdit ? `${API_BASE}/products/${productId}/enhanced` : `${API_BASE}/products/enhanced`;
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(productData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(isEdit ? 'Product updated successfully!' : 'Product created successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+                loadProducts();
+            })
+            .catch(error => {
+                console.error('Error saving product:', error);
+                alert('Failed to save product');
+            });
+        }
+        
+        function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            
+            fetch(`${API_BASE}/products/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                alert('Product deleted successfully!');
+                loadProducts();
+            })
+            .catch(error => {
+                console.error('Error deleting product:', error);
+                alert('Failed to delete product');
+            });
+        }
+        
+        function viewProductDetails(id) {
+            currentProductId = id;
+            fetch(`${API_BASE}/products/${id}/details`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(product => {
+                // Display basic info
+                document.getElementById('productBasicInfo').innerHTML = `
+                    <table class="table">
+                        <tr><th>Product Code:</th><td>${product.productCode || 'N/A'}</td></tr>
+                        <tr><th>Product Name:</th><td>${product.productName}</td></tr>
+                        <tr><th>Description:</th><td>${product.description || 'N/A'}</td></tr>
+                        <tr><th>Status:</th><td><span class="status-badge status-${product.status}">${product.status}</span></td></tr>
+                        <tr><th>Currency:</th><td>${product.currency}</td></tr>
+                        <tr><th>Amount Range:</th><td>${product.minAmount} - ${product.maxAmount}</td></tr>
+                        <tr><th>Tenure Range:</th><td>${product.minTenureMonths} - ${product.maxTenureMonths} months</td></tr>
+                        <tr><th>Interest Rate:</th><td>${product.interestRate}%</td></tr>
+                    </table>
+                `;
+                
+                // Load rates, rules, and profiles
+                loadRates(id);
+                loadRules(id);
+                loadTermProfiles(id);
+                
+                new bootstrap.Modal(document.getElementById('productDetailsModal')).show();
+            })
+            .catch(error => {
+                console.error('Error loading product details:', error);
+                alert('Failed to load product details');
+            });
+        }
+        
+        function loadRates(productId) {
+            fetch(`${API_BASE}/products/${productId}/rates`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(rates => {
+                let html = '<table class="table table-hover"><thead><tr><th>Customer Type</th><th>Term Range (Days)</th><th>Rate (%)</th><th>Effective Period</th><th>Actions</th></tr></thead><tbody>';
+                rates.forEach(rate => {
+                    html += `
+                        <tr>
+                            <td>${rate.customerType}</td>
+                            <td>${rate.termFromDays} - ${rate.termToDays}</td>
+                            <td>${rate.interestRate}%</td>
+                            <td>${rate.effectiveFrom} ${rate.effectiveTo ? '- ' + rate.effectiveTo : '(ongoing)'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteRate(${rate.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                document.getElementById('rateMatrixTable').innerHTML = html;
+            });
+        }
+        
+        function loadRules(productId) {
+            fetch(`${API_BASE}/products/${productId}/rules`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(rules => {
+                let html = '<table class="table table-hover"><thead><tr><th>Rule Type</th><th>Rule Value</th><th>Effective Period</th><th>Actions</th></tr></thead><tbody>';
+                rules.forEach(rule => {
+                    html += `
+                        <tr>
+                            <td>${rule.ruleTypeName}</td>
+                            <td><code>${rule.ruleValue}</code></td>
+                            <td>${rule.effectiveFrom} ${rule.effectiveTo ? '- ' + rule.effectiveTo : '(ongoing)'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteRule(${rule.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                document.getElementById('businessRulesTable').innerHTML = html;
+            });
+        }
+        
+        function loadTermProfiles(productId) {
+            fetch(`${API_BASE}/products/${productId}/term-profiles`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(profiles => {
+                let html = '<table class="table table-hover"><thead><tr><th>Amount Range</th><th>Term Range (Days)</th><th>Compounding</th><th>Actions</th></tr></thead><tbody>';
+                profiles.forEach(profile => {
+                    html += `
+                        <tr>
+                            <td>${profile.minAmount} - ${profile.maxAmount}</td>
+                            <td>${profile.minTermDays} - ${profile.maxTermDays}</td>
+                            <td>${profile.compoundingFrequency}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteTermProfile(${profile.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                document.getElementById('termProfilesTable').innerHTML = html;
+            });
+        }
+        
+        function showAddRateModal() {
+            document.getElementById('rateForm').reset();
+            document.getElementById('rateEffectiveFrom').valueAsDate = new Date();
+            new bootstrap.Modal(document.getElementById('addRateModal')).show();
+        }
+        
+        function saveRate() {
+            const rateData = {
+                customerType: document.getElementById('rateCustomerType').value,
+                termFromDays: parseInt(document.getElementById('rateTermFromDays').value),
+                termToDays: parseInt(document.getElementById('rateTermToDays').value),
+                interestRate: parseFloat(document.getElementById('rateInterestRate').value),
+                effectiveFrom: document.getElementById('rateEffectiveFrom').value,
+                effectiveTo: document.getElementById('rateEffectiveTo').value || null
+            };
+            
+            fetch(`${API_BASE}/products/${currentProductId}/rates`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify(rateData)
+            })
+            .then(response => response.json())
+            .then(() => {
+                alert('Rate added successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('addRateModal')).hide();
+                loadRates(currentProductId);
+            })
+            .catch(error => {
+                console.error('Error saving rate:', error);
+                alert('Failed to save rate');
+            });
+        }
+        
+        function deleteRate(rateId) {
+            if (!confirm('Are you sure you want to delete this rate?')) return;
+            
+            fetch(`${API_BASE}/rates/${rateId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                alert('Rate deleted successfully!');
+                loadRates(currentProductId);
+            })
+            .catch(error => {
+                console.error('Error deleting rate:', error);
+                alert('Failed to delete rate');
+            });
+        }
+        
+        function deleteRule(ruleId) {
+            if (!confirm('Are you sure you want to delete this rule?')) return;
+            
+            fetch(`${API_BASE}/rules/${ruleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                alert('Rule deleted successfully!');
+                loadRules(currentProductId);
+            })
+            .catch(error => {
+                console.error('Error deleting rule:', error);
+                alert('Failed to delete rule');
+            });
+        }
+        
+        function deleteTermProfile(profileId) {
+            if (!confirm('Are you sure you want to delete this term profile?')) return;
+            
+            fetch(`${API_BASE}/term-profiles/${profileId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                alert('Term profile deleted successfully!');
+                loadTermProfiles(currentProductId);
+            })
+            .catch(error => {
+                console.error('Error deleting term profile:', error);
+                alert('Failed to delete term profile');
+            });
+        }
+        
+        function showAddRuleModal() {
+            alert('Business rule creation UI coming soon!');
+        }
+        
+        function showAddTermProfileModal() {
+            alert('Term profile creation UI coming soon!');
+        }
+    </script>
+</body>
+</html>

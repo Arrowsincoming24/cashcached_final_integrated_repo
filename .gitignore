@@ -1,0 +1,23 @@
+# Build files
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Application properties (if contains sensitive data)
+# application-prod.properties

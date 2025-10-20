@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashCached - Premium Fixed Deposit Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/fd-simulator/css/premium-theme.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hero-container {
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-card {
+            text-align: center;
+        }
+
+        .badge-top {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            color: #a5b4fc;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .main-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 16px 0;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 0 32px 0;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 32px;
+            }
+
+            .top-nav {
+                padding: 16px 20px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn-large {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="/fd-simulator/" class="logo-brand">
+            <span class="logo-infinity">∞</span>
+            <span class="logo-text">CASHCACHED</span>
+        </a>
+        <div class="nav-buttons">
+            <a href="/fd-simulator/login" class="btn btn-secondary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="/fd-simulator/register" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-container">
+        <div class="glass-card welcome-card" style="padding: 50px 40px;">
+            <div class="badge-top">
+                <i class="fas fa-star"></i> India's Most Trusted FD Platform
+            </div>
+            
+            <h1 class="main-title">Welcome to CASHCACHED</h1>
+            
+            <p class="subtitle">
+                Secure Your Future with Our Premium Fixed Deposit Plans.<br>
+                Experience hassle-free banking with competitive interest rates up to 7.75%,<br>
+                flexible tenure options, and guaranteed returns backed by bank-grade security.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="/fd-simulator/fd-calculator" class="btn btn-primary btn-large">
+                    <i class="fas fa-calculator"></i> Calculate Your Returns
+                </a>
+                <a href="/fd-simulator/register" class="btn btn-secondary btn-large">
+                    <i class="fas fa-rocket"></i> Get Started Free
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="context-path" content="/fd-simulator">
+    <title>CASHCACHED - Your Trusted Banking Partner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient-start: #667eea;
+            --primary-gradient-end: #764ba2;
+            --secondary-purple: #8b5cf6;
+            --secondary-aqua: #3b82f6;
+            --dark-bg: #0f172a;
+            --light-bg: #F5F5F7;
+            --grey-text: #6B7280;
+            --shadow: 0px 4px 10px rgba(0,0,0,0.25);
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--light-bg);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.15), transparent);
+            border-radius: 50%;
+            top: -250px;
+            right: -250px;
+            animation: pulse 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(118, 75, 162, 0.15), transparent);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+            animation: pulse 10s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+            color: white;
+            padding: 140px 0 120px;
+            position: relative;
+            overflow: hidden;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, var(--secondary-purple) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, var(--secondary-aqua) 0%, transparent 50%);
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .cta-button {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            border-radius: 16px;
+            background: white;
+            color: var(--primary-gradient-end);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.35);
+            background: var(--light-bg);
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+            background: var(--light-bg);
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            height: 100%;
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-gradient-end);
+            box-shadow: 0px 10px 30px rgba(255, 0, 153, 0.2);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark-bg);
+        }
+        
+        .feature-description {
+            color: var(--grey-text);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        /* Products Section */
+        .products-section {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-bg);
+            letter-spacing: -0.02em;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--grey-text);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            font-weight: 400;
+        }
+        
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 35px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            height: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--primary-gradient-end);
+            box-shadow: 0 20px 60px rgba(118, 75, 162, 0.4);
+        }
+        
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .product-rate {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+            color: var(--dark-bg);
+            margin: 15px 0;
+            font-family: 'SF Mono', 'Courier New', monospace;
+        }
+        
+        .product-rate span {
+            font-size: 1rem;
+            color: var(--grey-text);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .product-details {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        .product-details li {
+            padding: 8px 0;
+            color: var(--grey-text);
+            border-bottom: 1px solid #f1f5f9;
+            font-weight: 400;
+        }
+        
+        .product-details li:last-child {
+            border-bottom: none;
+        }
+        
+        .product-details i {
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-right: 10px;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+            color: white;
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, var(--secondary-purple) 0%, transparent 50%);
+            opacity: 0.3;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--light-bg);
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark-bg);
+            letter-spacing: -0.02em;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            color: var(--grey-text);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .navbar-custom {
+            background: rgba(13, 13, 18, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid rgba(255, 91, 190, 0.1);
+        }
+        
+        .navbar-custom .nav-link {
+            color: var(--light-bg);
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .navbar-custom .nav-link:hover {
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            color: white;
+            padding: 10px 28px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 8px 20px rgba(255, 0, 153, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" style="font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <i class="fas fa-infinity" style="background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i> CASHCACHED
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#calculator">Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-login me-2" onclick="goToCustomerLogin()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-user"></i> Customer Login
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-login" onclick="goToAdminLogin()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-shield-alt"></i> Admin Login
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 30px; margin-bottom: 20px;">
+                        <span style="font-size: 0.9rem; font-weight: 600;">🎯 India's Most Trusted FD Platform</span>
+                    </div>
+                    <h1 class="hero-title">Welcome to CASHCACHED</h1>
+                    <p class="hero-subtitle">Secure Your Future with Our Premium Fixed Deposit Plans</p>
+                    <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.7;">
+                        Experience hassle-free banking with competitive interest rates up to <strong>7.75%</strong>, flexible tenure options, and guaranteed returns backed by bank-grade security.
+                    </p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="cta-button" onclick="goToCalculator()">
+                            <i class="fas fa-calculator"></i> Calculate Your Returns
+                        </button>
+                        <button class="cta-button" onclick="goToCustomerLogin()" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                            <i class="fas fa-arrow-right"></i> Get Started
+                        </button>
+                    </div>
+                    <div style="margin-top: 30px; display: flex; gap: 30px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 1.8rem; font-weight: 700;">50K+</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Happy Customers</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.8rem; font-weight: 700;">₹500Cr+</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Deposits Managed</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.8rem; font-weight: 700;">7.75%</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Max Interest Rate</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center" style="position: relative;">
+                    <div style="position: relative; z-index: 1;">
+                        <!-- Modern 3D Card Stack -->
+                        <div style="position: relative; width: 400px; height: 400px; margin: 0 auto;">
+                            <div style="position: absolute; width: 300px; height: 180px; background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)); backdrop-filter: blur(20px); border-radius: 20px; top: 0; left: 50px; transform: rotate(-10deg); box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); animation: float 6s ease-in-out infinite;">
+                                <div style="padding: 25px;">
+                                    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px;">7.75%</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Premium Returns</div>
+                                    <div style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">Fixed Deposit</div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; width: 300px; height: 180px; background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1)); backdrop-filter: blur(20px); border-radius: 20px; top: 80px; left: 80px; transform: rotate(5deg); box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); animation: float 6s ease-in-out infinite; animation-delay: 0.5s;">
+                                <div style="padding: 25px;">
+                                    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px;">₹500Cr+</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Deposits Managed</div>
+                                    <div style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">Trusted by 50K+</div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; width: 300px; height: 180px; background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.15)); backdrop-filter: blur(20px); border-radius: 20px; top: 160px; left: 50px; transform: rotate(2deg); box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); animation: float 6s ease-in-out infinite; animation-delay: 1s;">
+                                <div style="padding: 25px;">
+                                    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px;">100%</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Secure & Safe</div>
+                                    <div style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">Bank-Grade Security</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+
+    <!-- Exchange Rates Section -->
+    <section style="background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); padding: 40px 0; margin-top: -50px;">
+        <div class="container">
+            <div style="text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                <h3 style="color: #667eea; font-weight: 700; margin-bottom: 20px; font-size: 1.5rem;">
+                    <i class="fas fa-exchange-alt"></i> Current Exchange Rates
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(102,126,234,0.3);">
+                        <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">USD to INR</div>
+                        <div style="font-size: 1.8rem; font-weight: 700;">₹83.00</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #764ba2, #f093fb); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(118,75,162,0.3);">
+                        <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">USD to KWD</div>
+                        <div style="font-size: 1.8rem; font-weight: 700;">د.ك0.31</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb, #667eea); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(240,147,251,0.3);">
+                        <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">INR to USD</div>
+                        <div style="font-size: 1.8rem; font-weight: 700;">$0.01</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #667eea, #f093fb); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(102,126,234,0.3);">
+                        <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">KWD to USD</div>
+                        <div style="font-size: 1.8rem; font-weight: 700;">$3.23</div>
+                    </div>
+                </div>
+                <p style="margin-top: 15px; color: #6c757d; font-size: 0.85rem;">
+                    <i class="fas fa-info-circle"></i> Rates updated as of October 2025 | All conversions to 2 decimal precision
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose CASHCACHED?</h2>
+            <p class="section-subtitle">Experience banking excellence with our premium features</p>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.1s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">100% Secure</h3>
+                        <p class="feature-description">Your deposits are insured and protected with bank-grade security measures.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.2s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">High Returns</h3>
+                        <p class="feature-description">Earn competitive interest rates up to 7.75% per annum on your deposits.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.3s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="feature-title">Flexible Tenure</h3>
+                        <p class="feature-description">Choose from multiple tenure options ranging from 3 months to 5 years.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.4s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Easy Access</h3>
+                        <p class="feature-description">Manage your FDs anytime, anywhere with our user-friendly platform.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.5s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="feature-title">24/7 Support</h3>
+                        <p class="feature-description">Get assistance whenever you need with our dedicated customer support team.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" style="animation-delay: 0.6s;">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="feature-title">Tax Benefits</h3>
+                        <p class="feature-description">Avail tax benefits under Section 80C with our Tax Saver FD plans.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Happy Customers</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">₹500Cr+</div>
+                        <div class="stat-label">Deposits Managed</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">FD Products</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">7.75%</div>
+                        <div class="stat-label">Max Interest Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <h2 class="section-title">Our Fixed Deposit Products</h2>
+            <p class="section-subtitle">Choose the perfect plan that suits your financial goals</p>
+            
+            <div class="row g-4" id="productsContainer">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="calculator">
+        <div class="container">
+            <h2>Ready to Start Your Investment Journey?</h2>
+            <p>Calculate your returns and open an FD account today!</p>
+            <button class="cta-button" onclick="goToCalculator()">
+                <i class="fas fa-calculator"></i> Try FD Calculator
+            </button>
+            <button class="cta-button ms-3" onclick="goToCustomerLogin()" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                <i class="fas fa-user"></i> Customer Login
+            </button>
+            <button class="cta-button ms-3" onclick="goToAdminLogin()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                <i class="fas fa-shield-alt"></i> Admin Login
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 style="margin-bottom: 20px;">
+                        <i class="fas fa-piggy-bank"></i> CASHCACHED
+                    </h5>
+                    <p style="color: #94a3b8;">Your trusted banking partner for secure and profitable fixed deposit investments.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="margin-bottom: 20px;">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#calculator">Calculator</a></li>
+                        <li><a href="#" onclick="goToLogin()">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="margin-bottom: 20px;">Contact Us</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-phone"></i> 1800-XXX-XXXX</li>
+                        <li><i class="fas fa-envelope"></i> support@cashcached.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Mumbai, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="border-color: #475569; margin: 30px 0 20px;">
+            <div class="text-center" style="color: #94a3b8;">
+                <p>&copy; 2025 CASHCACHED. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/fd-simulator/js/auth.js"></script>
+    <script>
+        const BASE_URL = window.__FD_CONTEXT__ || '/fd-simulator';
+        
+        function goToLogin() {
+            window.location.href = BASE_URL + '/login';
+        }
+        
+        function goToCustomerLogin() {
+            window.location.href = BASE_URL + '/login';
+        }
+        
+        function goToAdminLogin() {
+            window.location.href = BASE_URL + '/login';
+        }
+        
+        function goToCalculator() {
+            window.location.href = BASE_URL + '/fd-calculator';
+        }
+        
+        // Load products with timeout and better error handling
+        async function loadProducts() {
+            const container = document.getElementById('productsContainer');
+            
+            try {
+                // Add timeout to fetch request
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                
+                const response = await fetch(BASE_URL + '/api/public/products/active', {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const products = await response.json();
+                container.innerHTML = '';
+                
+                if (!products || products.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center"><p style="color: var(--grey-text);">No products available at the moment.</p></div>';
+                    return;
+                }
+                
+                // Show first 6 products
+                products.slice(0, 6).forEach(product => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-6 col-lg-4';
+                    col.innerHTML = `
+                        <div class="product-card">
+                            <h4 class="product-name">${product.productName}</h4>
+                            <div class="product-rate">${product.interestRate}% <span>p.a.</span></div>
+                            <p style="color: #64748b; margin-bottom: 20px;">${product.description || ''}</p>
+                            <ul class="product-details">
+                                <li><i class="fas fa-rupee-sign"></i> ₹${product.minAmount.toLocaleString()} - ₹${product.maxAmount.toLocaleString()}</li>
+                                <li><i class="fas fa-calendar"></i> ${product.minTenureMonths} - ${product.maxTenureMonths} months</li>
+                                <li><i class="fas fa-check-circle"></i> Guaranteed Returns</li>
+                            </ul>
+                            <button class="btn btn-primary w-100 mt-3" onclick="goToCalculator()">
+                                Calculate Returns
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(col);
+                });
+            } catch (error) {
+                console.error('Error loading products:', error);
+                container.innerHTML = 
+                    '<div class="col-12 text-center"><p style="color: var(--grey-text);">Unable to load products. Please refresh the page or try again later.</p></div>';
+            }
+        }
+        
+        // Load products on page load
+        loadProducts();
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
